@@ -34,7 +34,7 @@ describe('KeePair', () => {
       const signature = pair.sign(message, "sha256");
 
       expect(signature).toBeDefined();
-      expect(signature.length).toBeGreaterThan(140);
+      expect(signature.length).toBeGreaterThanOrEqual(140);
    });
 
    test('Verify a Signature', async () => {

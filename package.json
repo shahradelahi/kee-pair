@@ -25,7 +25,7 @@
     "keccak256"
   ],
   "scripts": {
-    "test": "jest --watchAll",
+    "test": "jest",
     "test:ci": "jest --ci --coverage",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
