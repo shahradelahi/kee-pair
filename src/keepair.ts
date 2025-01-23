@@ -8,39 +8,25 @@ export class KeePair<T extends Algorithm> {
   readonly #pubObject: KeyObject;
   readonly #privObject: KeyObject;
 
-  readonly #pubBuf: Buffer;
-  readonly #privBuf: Buffer;
+  readonly publicKey: Buffer;
+  readonly privateKey: Buffer;
 
   readonly algorithm: AlgorithmOptions<T>;
-
-  /**
-   * Get the public key of the pair, in hex encoding.
-   */
-  get publicKey(): string {
-    return this.#privBuf.toString('hex');
-  }
-
-  /**
-   * Get the private key of the pair, in hex encoding.
-   */
-  get privateKey(): string {
-    return this.#privBuf.toString('hex');
-  }
 
   constructor(publicKey: KeyLike, privateKey: KeyLike, algorithm: AlgorithmOptions<T>) {
     this.algorithm = algorithm;
 
-    this.#pubBuf = typeof publicKey === 'string' ? Buffer.from(publicKey, 'hex') : publicKey;
-    this.#privBuf = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
+    this.publicKey = typeof publicKey === 'string' ? Buffer.from(publicKey, 'hex') : publicKey;
+    this.privateKey = typeof privateKey === 'string' ? Buffer.from(privateKey, 'hex') : privateKey;
 
     this.#pubObject = crypto.createPublicKey({
-      key: this.#pubBuf,
+      key: this.publicKey,
       type: this.algorithm.publicEncodingType,
       format: this.algorithm.publicEncodingFormat,
     });
 
     this.#privObject = crypto.createPrivateKey({
-      key: this.#privBuf,
+      key: this.privateKey,
       type: this.algorithm.privateEncodingType,
       format: this.algorithm.privateEncodingFormat,
     });

@@ -9,10 +9,10 @@ describe('KeePair', () => {
     expect(pair).toBeDefined();
 
     expect(pair.privateKey).toBeDefined();
-    expect(pair.privateKey.length).toBe(236);
+    expect(pair.privateKey.byteLength).toBe(118);
 
     expect(pair.publicKey).toBeDefined();
-    expect(pair.publicKey.length).toBe(236);
+    expect(pair.publicKey.byteLength).toBe(88);
   });
 
   test('Regenerate a Public Key from a Private Key', () => {
@@ -20,7 +20,8 @@ describe('KeePair', () => {
 
     const pubKey = KeePair.fromPrivateKey(pair.privateKey, 'secp256k1');
 
-    expect(pair.publicKey).toBe(pubKey.publicKey);
+    expect(pair.publicKey.toString()).toBe(pubKey.publicKey.toString());
+    expect(pair.privateKey.compare(pubKey.privateKey)).toBe(0);
   });
 
   test('Sign a Message', () => {
