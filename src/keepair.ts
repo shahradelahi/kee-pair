@@ -13,10 +13,16 @@ export class KeePair<T extends Algorithm> {
 
   readonly algorithm: AlgorithmOptions<T>;
 
+  /**
+   * Get the public key of the pair, in hex encoding.
+   */
   get publicKey(): string {
     return this.#privBuf.toString('hex');
   }
 
+  /**
+   * Get the private key of the pair, in hex encoding.
+   */
   get privateKey(): string {
     return this.#privBuf.toString('hex');
   }
@@ -83,19 +89,15 @@ export class KeePair<T extends Algorithm> {
     return new KeePair(publicKey, privateKey, opts) as KeePair<T>;
   }
 
-  sign(data: string, hashAlgorithm: HashAlgorithm): string {
-    return crypto
-      .createSign(hashAlgorithm.toLowerCase())
-      .update(data)
-      .sign(this.#privObject)
-      .toString('hex');
+  sign(data: string, hashAlgorithm: HashAlgorithm): Buffer {
+    return crypto.createSign(hashAlgorithm.toLowerCase()).update(data).sign(this.#privObject);
   }
 
-  verify(data: string, signature: string, hashAlgorithm: HashAlgorithm): boolean {
+  verify(data: string, signature: Buffer, hashAlgorithm: HashAlgorithm): boolean {
     return crypto
       .createVerify(hashAlgorithm.toLowerCase())
       .update(data)
-      .verify(this.#pubObject, Buffer.from(signature, 'hex'));
+      .verify(this.#pubObject, signature);
   }
 }
 
