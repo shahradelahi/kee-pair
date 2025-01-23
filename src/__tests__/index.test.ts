@@ -1,53 +1,48 @@
-import {describe, expect, test} from "@jest/globals";
-import {KeePair} from "../index";
+import { describe, expect, test } from 'vitest';
+
+import { KeePair } from '@/index';
 
 describe('KeePair', () => {
+  test('Generate a KeePair with Secp256k1', () => {
+    const pair = KeePair.generate('secp256k1');
 
-   test('Generate a KeePair with Secp256k1', async () => {
+    expect(pair).toBeDefined();
 
-      const pair = await KeePair.generate("secp256k1");
+    expect(pair.privateKey).toBeDefined();
+    expect(pair.privateKey.length).toBe(236);
 
-      expect(pair).toBeDefined();
+    expect(pair.publicKey).toBeDefined();
+    expect(pair.publicKey.length).toBe(236);
+  });
 
-      expect(pair.privateKey).toBeDefined();
-      expect(pair.privateKey.length).toBe(236);
+  test('Regenerate a Public Key from a Private Key', () => {
+    const pair = KeePair.generate('secp256k1');
 
-      expect(pair.publicKey).toBeDefined();
-      expect(pair.publicKey.length).toBe(176);
-   });
+    const pubKey = KeePair.fromPrivateKey(pair.privateKey, 'secp256k1');
 
-   test('Regenerate a Public Key from a Private Key', async () => {
+    expect(pair.publicKey).toBe(pubKey.publicKey);
+  });
 
-      const pair = await KeePair.generate("secp256k1");
+  test('Sign a Message', () => {
+    const pair = KeePair.generate('secp256k1');
 
-      const pubKey = await KeePair.fromPrivateKey(pair.privateKey, "secp256k1");
+    const message = 'Hello World!';
 
-      expect(pair.publicKey).toBe(pubKey.publicKey);
-   });
+    const signature = pair.sign(message, 'sha256');
 
-   test('Sign a Message', async () => {
+    expect(signature).toBeDefined();
+    expect(signature.length).toBeGreaterThanOrEqual(140);
+  });
 
-      const pair = await KeePair.generate("secp256k1");
+  test('Verify a Signature', () => {
+    const pair = KeePair.generate('secp256k1');
 
-      const message = "Hello World!";
+    const message = 'Hello World!';
 
-      const signature = pair.sign(message, "sha256");
+    const signature = pair.sign(message, 'sha256');
 
-      expect(signature).toBeDefined();
-      expect(signature.length).toBeGreaterThanOrEqual(140);
-   });
+    const verified = pair.verify(message, signature, 'sha256');
 
-   test('Verify a Signature', async () => {
-
-      const pair = await KeePair.generate("secp256k1");
-
-      const message = "Hello World!";
-
-      const signature = pair.sign(message, "sha256");
-
-      const verified = pair.verify(message, signature, "sha256");
-
-      expect(verified).toBe(true);
-   });
-
+    expect(verified).toBe(true);
+  });
 });
